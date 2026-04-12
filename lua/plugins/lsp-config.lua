@@ -13,7 +13,6 @@ return {
         -- Java
         "jdtls",
         -- C++ (Recuerda que en Alpine lo instalamos por APK, pero Mason lo registra)
-        "clangd",
       },
     },
   },
@@ -42,6 +41,11 @@ return {
             )(fname) or vim.loop.os_homedir()
           end,
         },
+        -- Los demás servidores se configuran automáticamente por LazyVim
+        pyright = {},
+        tsserver = {},
+        rust_analyzer = {},
+        jdtls = {},
       },
     },
   },
