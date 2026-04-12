@@ -1,7 +1,7 @@
 return {
   -- Configuración de Mason para asegurar que se instalen los servidores
   {
-    "williamboman/mason.nvim",
+    "mason-org/mason.nvim",
     opts = {
       ensure_installed = {
         -- Python
