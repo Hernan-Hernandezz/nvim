@@ -21,7 +21,8 @@ RUN apk add --no-cache \
     clang \
     openjdk17-jre-headless \
     rust \
-    cargo
+    cargo \
+    tree-sitter-cli
 
 # 3. Configurar directorios de trabajo
 RUN mkdir -p /root/.config /workspace

@@ -23,13 +23,24 @@ return {
     "neovim/nvim-lspconfig",
     opts = {
       servers = {
-        pyright = {},
-        tsserver = {},
-        rust_analyzer = {},
-        jdtls = {},
         clangd = {
-          -- IMPORTANTE: Para que funcione en Alpine con el comando del sistema
-          cmd = { "clangd", "--background-index", "--clang-tidy" },
+          cmd = {
+            "clangd",
+            "--background-index",
+            "--clang-tidy",
+            "--fallback-style=llvm",
+          },
+          root_dir = function(fname)
+            return require("lspconfig.util").root_pattern(
+              "Makefile",
+              "configure.ac",
+              "configure.in",
+              "config.h.in",
+              "compile_commands.json",
+              "compile_flags.txt",
+              ".git"
+            )(fname) or vim.loop.os_homedir()
+          end,
         },
       },
     },
