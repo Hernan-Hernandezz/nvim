@@ -1,7 +1,8 @@
-# Imagen base ultra ligera
+# 1. Imagen base ultra ligera
 FROM alpine:latest
 
-# 1. Instalar dependencias esenciales para Neovim y desarrollo
+# 2. Instalar dependencias esenciales para todos los lenguajes solicitados
+# Incluye: Python, JS/TS, C++, Java, Rust y compatibilidad para LSPs
 RUN apk add --no-cache \
     neovim \
     git \
@@ -13,25 +14,32 @@ RUN apk add --no-cache \
     python3 \
     py3-pip \
     bash \
-    stdc++ \
+    libstdc++ \
     g++ \
-    gcompat  # Añadido para compatibilidad con LSPs de Mason en Alpine
+    gcompat \
+    clang-extra-tools \
+    clang \
+    openjdk17-jre-headless \
+    rust \
+    cargo
 
-# 2. Configurar directorios
+# 3. Configurar directorios de trabajo
 RUN mkdir -p /root/.config /workspace
 WORKDIR /workspace
 
-# 3. Script de arranque inteligente
-# Se encarga de clonar tu repo de GitHub o actualizarlo si ya existe
+# 4. Crear el script de sincronización (Sincroniza pero NO abre nvim)
 RUN echo -e '#!/bin/bash \n\
 if [ ! -d "/root/.config/nvim" ]; then \n\
-  echo "📥 Descargando configuración de Hernan-Hernandezz..." \n\
+  echo "📥 Clonando configuración desde GitHub..." \n\
   git clone https://github.com/Hernan-Hernandezz/nvim.git /root/.config/nvim \n\
 else \n\
-  echo "🔄 Sincronizando cambios de configuración..." \n\
+  echo "🔄 Actualizando configuración..." \n\
   cd /root/.config/nvim && git pull \n\
+  cd /workspace \n\
 fi \n\
-nvim "$@"' > /usr/local/bin/entrypoint.sh && chmod +x /usr/local/bin/entrypoint.sh
+# Mensaje de bienvenida \n\
+echo "✅ Entorno listo. Escribe nvim para empezar o exit para salir." \n\
+/bin/bash' > /usr/local/bin/start.sh && chmod +x /usr/local/bin/start.sh
 
-# 4. Iniciar el script al arrancar el contenedor
-ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+# 5. Punto de entrada: Ejecuta el script de sincronización y te deja en la terminal
+ENTRYPOINT ["/usr/local/bin/start.sh"]
