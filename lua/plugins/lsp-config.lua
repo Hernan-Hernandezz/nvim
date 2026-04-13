@@ -1,7 +1,3 @@
--- Detectar si estamos en Alpine (Docker) o Ubuntu (Local)
-local is_docker = vim.fn.filereadable("/etc/alpine-release") == 1
-local clangd_cmd = is_docker and "/usr/bin/clangd" or "clangd"
-
 return {
   -- Configuración de Mason para asegurar que se instalen los servidores
   {
@@ -27,12 +23,11 @@ return {
     opts = {
       servers = {
         clangd = {
-          cmd = {
-            clangd_cmd,
-            "--background-index",
-            "--clang-tidy",
-            "--fallback-style=llvm",
+          cmd = { "clangd", "--background-index", "--clang-tidy" },
+          capabilities = {
+            offsetEncoding = { "utf-16" }, -- Fix común para errores de codificación en C++
           },
+
           root_dir = function(fname)
             return require("lspconfig.util").root_pattern(
               "Makefile",
